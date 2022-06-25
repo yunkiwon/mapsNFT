@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
+import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
+
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
@@ -148,9 +150,25 @@ export default function App() {
         });
     });
 
+    const mintNFT = ()=>{
+        console.log("mintNFT")
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner()
+        const contract = new ethers.Contract(contract_address, MapNFT.abi, signer)
+    contract.mint(1,{value: ethers.utils.parseEther(".03")}).then(resp=>{
+      console.log("minted 1 ", resp)
+      setTotalSupply(totalSupply+1)
+    }).catch(e=>console.log(e))
+      }
+
+   
+
     return (
         <div>
+
             <div ref={mapContainer} className="map-container" id="map"/>
+            
+
         </div>
     );
 }
