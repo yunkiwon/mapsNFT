@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { ethers } from 'ethers'
 import mapboxgl from 'mapbox-gl';
 import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
 
@@ -47,7 +48,7 @@ export default function App() {
                 'type': 'geojson',
                 'data': 'https://raw.githubusercontent.com/yunkiwon/mapsNFT/main/neighborhoods.json'
             });
-            Object.keys(imageUrls).forEach(function(key) {
+            Object.keys(imageUrls).forEach(function (key) {
                 let value = imageUrls[key];
                 map.current.loadImage(
                     value["url"],
@@ -111,7 +112,7 @@ export default function App() {
                 }
             });
             map.current.on('click', 'state-fills', (e) => {
-            //    console.log(e.features)
+                //    console.log(e.features)
                 let coordinatesx = e.features[0].properties.pointx;
                 let coordinatesy = e.features[0].properties.pointy;
                 while (Math.abs(e.lngLat.lng - coordinatesx) > 180) {
@@ -149,32 +150,50 @@ export default function App() {
             });
         });
     });
-    
-    //have to deploy a contract on hardhat local and paste address into env file
-    const contract_address = process.env.MINTER_CONTRACT_ADDRESS
 
-    const mintNFT = ()=>{
+
+    //have to deploy a contract on hardhat local and paste address into env file
+    const contract_address = process.env.NEXT_PUBLIC_MINTER_CONTRACT_ADDRESS
+
+    //current # of minted nft's
+    const [TotalNftsMinted, setTotalNftsMinted] = useState(0)
+
+    const mintNFT = () => {
         console.log("mintNFT")
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner()
+
+        const contract = new ethers.Contract(contract_address, Minter.abi, signer)
+
+        //cost per mint is .03
+        contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
+            console.log("minted 1 ", resp)
+            setTotalNftsMinted(totalSupply + 1)
+        }).catch(e => console.log(e))
+    }
+
+
+
+
+    //will get the current number of nft's minted on initial load
+    useEffect(() => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner()
 
         //have to paste deployed contract
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
+        contract.totalSupply().then(resp => {
+            setTotalNftsMinted(resp.toNumber())
+        })
+    }, [])
 
-        //cost per mint is .03
-    contract.mint(1,{value: ethers.utils.parseEther(".03")}).then(resp=>{
-      console.log("minted 1 ", resp)
-      setTotalSupply(totalSupply+1)
-    }).catch(e=>console.log(e))
-      }
 
-   
 
     return (
         <div>
+            <h1> NFT's Minted: {TotalNftsMinted}</h1>
+            <div ref={mapContainer} className="map-container" id="map" />
 
-            <div ref={mapContainer} className="map-container" id="map"/>
-            
 
         </div>
     );
