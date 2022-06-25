@@ -68,54 +68,13 @@ export default function Home() {
   return (
     <div className="max-w-xl mt-36 mx-auto px-4">
       <Head>
-        <title>Unruggable Blobs</title>
+        <title>Neighborhood</title>
         <meta name="description" content="Mint an NFT, or a number of NFTs, from the client-side." />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Wallet />
       <main className="space-y-8">
-        { ! process.env.NEXT_PUBLIC_MINTER_ADDRESS ? (
-            <p className="text-md">
-              Please add a value to the <pre>NEXT_PUBLIC_MINTER_ADDRESS</pre> environment variable.
-            </p>
-        ) : (
-          <>
-            <h1 className="text-4xl font-semibold mb-8">
-              Blobs
-            </h1>
-            <TotalSupply />
-            <div className="space-y-8">
-                <div className="bg-gray-100 p-4 lg:p-8">
-                  <div>
-                    <h2 className="text-2xl font-semibold mb-2">Mint NFTs</h2>
-                    <label className="text-gray-600 text-sm mb-2 inline-block">
-                      How many NFTs would you like to mint from the smart contract?
-                    </label>
-                    <div className="flex">
-                      <input
-                          className={ ! mintError ? "border p-4 text-center rounded-tl rounded-bl focus:outline-none focus:border-blue-600 w-2/3" : "border border-red-500 p-4 text-center rounded-tl rounded-bl focus:outline-none focus:border-blue-600 w-2/3"}
-                          onChange={ e => setMintQuantity(e.target.value)}
-                          value={mintQuantity}
-                          placeholder="1"
-                          type="number"
-                          min="1"
-                          max="10"
-                          ref={mintQuantityInputRef}
-                        />
-                      <button
-                        className="bg-blue-600 hover:bg-blue-700 text-white py-4 px-8 rounded-tr rounded-br w-1/3"
-                        onClick={mintNFTs}
-                      >
-                        { mintLoading ? 'Loading...' : 'Mint' }
-                      </button>
-                    </div>
-                    { mintMessage && <span className={mintError ? "text-red-600 text-xs mt-2 block" : "text-green-600 text-xs mt-2 block"}>{ mintMessage }</span> }
-                  </div>
-                </div>
-            </div>
-          </>
-        ) }
-        <YourNFTs />
+        
       </main>
 
     </div>
