@@ -4,15 +4,14 @@ import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
 
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
 export default function App() {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [lng, setLng] = useState(-73.949657);
     const [lat, setLat] = useState(40.791012);
 
-    function generateHTML() {
-        return `<strong>Current Bids:</strong><p><em>A Little Night Music</em></a> comes to the Kogod Cradle at The Mead Center for American Theater (1101 6th Street SW) this weekend and next. 8:00 p.m.</p>`
+    function generateHTML(name) {
+        return `<strong>Current Bids for ${name}</strong><p><em>Written by VitMalik</em></a> ;)))</p>`
     }
     let imageUrls = {
         "Chelsea": {
@@ -112,15 +111,16 @@ export default function App() {
                 }
             });
             map.current.on('click', 'state-fills', (e) => {
-                const coordinates = e.features[0].point;
-                const description = e.features[0].properties.description;
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                console.log(e.features)
+                let coordinatesx = e.features[0].properties.pointx;
+                let coordinatesy = e.features[0].properties.pointy;
+                while (Math.abs(e.lngLat.lng - coordinatesx) > 180) {
+                    coordinatesx += e.lngLat.lng > coordinatesx ? 360 : -360;
                 }
 
                 new mapboxgl.Popup()
-                    .setLngLat(coordinates)
-                    .setHTML(generateHTML())
+                    .setLngLat([coordinatesx, coordinatesy])
+                    .setHTML(generateHTML(e.features[0].properties.name))
                     .addTo(map.current);
             });
             map.current.on('mousemove', 'state-fills', (e) => {
