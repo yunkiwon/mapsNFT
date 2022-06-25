@@ -8,9 +8,9 @@
     how to create smart contracts on the blockchain.
     please review this code on your own before using any of
     the following code for production.
-    The developer will not be responsible or liable for all loss or 
-    damage whatsoever caused by you participating in any way in the 
-    experimental code, whether putting money into the contract or 
+    The developer will not be responsible or liable for all loss or
+    damage whatsoever caused by you participating in any way in the
+    experimental code, whether putting money into the contract or
     using the code for your own project.
 */
 
@@ -20,7 +20,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract BitBirds is ERC721, Ownable {
+contract Minter is ERC721, Ownable {
   using Strings for uint256;
   using Counters for Counters.Counter;
 
@@ -29,7 +29,7 @@ contract BitBirds is ERC721, Ownable {
   string public uriPrefix = "";
   string public uriSuffix = ".json";
   string public hiddenMetadataUri;
-  
+
   uint256 public cost = 0.03 ether;
   uint256 public maxSupply = 5555;
   uint256 public maxMintAmountPerTx = 5;
@@ -37,7 +37,7 @@ contract BitBirds is ERC721, Ownable {
   bool public paused = true;
   bool public revealed = false;
 
-  constructor() ERC721("BitBirds", "BBirds") {
+  constructor() ERC721("Minter", "BBirds") {
     setHiddenMetadataUri("ipfs://__CID__/hidden.json");
   }
 
@@ -57,7 +57,7 @@ contract BitBirds is ERC721, Ownable {
 
     _mintLoop(msg.sender, _mintAmount);
   }
-  
+
   function mintForAddress(uint256 _mintAmount, address _receiver) public mintCompliance(_mintAmount) onlyOwner {
     _mintLoop(_receiver, _mintAmount);
   }
