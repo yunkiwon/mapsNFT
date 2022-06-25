@@ -65,10 +65,10 @@ export default function Home() {
     setMintLoading(false)
   }
 
-  fetch(`${process.env.NFTPORT_BACKEND_URL}${process.env.BLOCKPARTY_CONTRACT_ADDRESS}?chain=ethereum&include=metadata`, {
-    method: 'GET',
-    headers: {"Content-Type": 'application/json', Authorization: process.env.NFTPORT_KEY}
-  }).then(res => res.json()).then(d => console.log(d))
+  // fetch(`${process.env.NFTPORT_BACKEND_URL}${process.env.BLOCKPARTY_CONTRACT_ADDRESS}?chain=ethereum&include=metadata`, {
+  //   method: 'GET',
+  //   headers: {"Content-Type": 'application/json', Authorization: process.env.NFTPORT_KEY}
+  // }).then(res => res.json()).then(d => console.log(d))
 
 
 

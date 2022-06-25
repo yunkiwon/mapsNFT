@@ -111,7 +111,7 @@ export default function App() {
                 }
             });
             map.current.on('click', 'state-fills', (e) => {
-                console.log(e.features)
+            //    console.log(e.features)
                 let coordinatesx = e.features[0].properties.pointx;
                 let coordinatesy = e.features[0].properties.pointy;
                 while (Math.abs(e.lngLat.lng - coordinatesx) > 180) {
@@ -154,7 +154,9 @@ export default function App() {
         console.log("mintNFT")
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner()
-        const contract = new ethers.Contract(contract_address, MapNFT.abi, signer)
+        const contract = new ethers.Contract(contract_address, Minter.abi, signer)
+
+        //cost per mint is .03
     contract.mint(1,{value: ethers.utils.parseEther(".03")}).then(resp=>{
       console.log("minted 1 ", resp)
       setTotalSupply(totalSupply+1)
