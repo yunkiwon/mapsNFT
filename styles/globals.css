@@ -2,3 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.map-container {
+    height: 800px;
+    width: 600px;
+    display: block;
+}
+
+body { margin: 0; padding: 0; }
+
+#map { position: absolute; top: 0; bottom: 0; }
