@@ -1,71 +1,102 @@
-import * as React from 'react';
-import {useState, useEffect, useMemo, useCallback} from 'react';
-import {render} from 'react-dom';
-import Map, {Source, Layer} from 'react-map-gl';
+import React, { useRef, useEffect, useState } from 'react';
+import mapboxgl from 'mapbox-gl';
 
-import {dataLayer} from '../components/mapStyle';
-
-const MAPBOX_TOKEN = 'eyJ1Ijoia2l3b255dW4iLCJhIjoiY2w0dTFnaDdyMHFrNjNsb2IxYnJjM2xoZCJ9.3DixWgkoFgNo5Tbde6WZNA'; // Set your mapbox token here
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
 export default function App() {
-  const [year, setYear] = useState(2015);
-  const [allData, setAllData] = useState(null);
-  const [hoverInfo, setHoverInfo] = useState(null);
+    const mapContainer = useRef(null);
+    const map = useRef(null);
+    const [lng, setLng] = useState(-73.949657);
+    const [lat, setLat] = useState(40.797069);
+    const [zoom, setZoom] = useState(20);
 
-  useEffect(() => {
-    /* global fetch */
-    fetch(
-      'https://raw.githubusercontent.com/uber/react-map-gl/master/examples/.data/us-income.geojson'
-    )
-      .then(resp => resp.json())
-      .then(json => setAllData(json))
-      .catch(err => console.error('Could not load data', err)); // eslint-disable-line
-  }, []);
+    useEffect(() => {
+        if (map.current) return; // initialize map only once
+        map.current = new mapboxgl.Map({
+            container: mapContainer.current,
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [lng, lat],
+            zoom: 2
+        });
+    });
 
-  const onHover = useCallback(event => {
-    const {
-      features,
-      point: {x, y}
-    } = event;
-    const hoveredFeature = features && features[0];
+    let hoveredStateId = null;
 
-    // prettier-ignore
-    setHoverInfo(hoveredFeature && {feature: hoveredFeature, x, y});
-  }, []);
+    useEffect(() => {
+        if (!map.current) return; // wait for map to initialize
+        map.current.on('load', () => {
+            map.current.addSource('states', {
+                'type': 'geojson',
+                'data': 'https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/manhattan.geojson'
+            });
 
-  const data = useMemo(() => {
-    return allData;
-  }, [allData, year]);
+// The feature-state dependent fill-opacity expression will render the hover effect
+// when a feature's hover state is set to true.
+            map.current.addLayer({
+                'id': 'state-fills',
+                'type': 'fill',
+                'source': 'states',
+                'layout': {},
+                'paint': {
+                    'fill-color': '#627BC1',
+                    'fill-opacity': [
+                        'case',
+                        ['boolean', ['feature-state', 'hover'], false],
+                        1,
+                        0.5
+                    ]
+                }
+            });
 
-  return (
-    <>
-      <Map
-        initialViewState={{
-          latitude: 40,
-          longitude: -100,
-          zoom: 3
-        }}
-        mapStyle="mapbox://styles/mapbox/streets-v9"
-        mapboxAccessToken={MAPBOX_TOKEN}
-        interactiveLayerIds={['data']}
-        onMouseMove={onHover}
-      >
-        <Source type="geojson" data={data}>
-          <Layer {...dataLayer} />
-        </Source>
-        {hoverInfo && (
-          <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
-            <div>State: {hoverInfo.feature.properties.name}</div>
-            <div>Median Household Income: {hoverInfo.feature.properties.value}</div>
-            <div>Percentile: {(hoverInfo.feature.properties.percentile / 8) * 100}</div>
-          </div>
-        )}
-      </Map>
+            map.current.addLayer({
+                'id': 'state-borders',
+                'type': 'line',
+                'source': 'states',
+                'layout': {},
+                'paint': {
+                    'line-color': '#627BC1',
+                    'line-width': 2
+                }
+            });
 
-    </>
-  );
-}
+// When the user moves their mouse over the state-fill layer, we'll update the
+// feature state for the feature under the mouse.
+            map.current.on('mousemove', 'state-fills', (e) => {
+                if (e.features.length > 0) {
+                    if (hoveredStateId !== null) {
+                        map.current.setFeatureState(
+                            { source: 'states', id: hoveredStateId },
+                            { hover: false }
+                        );
+                    }
+                    hoveredStateId = e.features[0].id;
+                    map.current.setFeatureState(
+                        { source: 'states', id: hoveredStateId },
+                        { hover: true }
+                    );
+                }
+            });
 
-export function renderToDom(container) {
-  render(<App />, container);
+// When the mouse leaves the state-fill layer, update the feature state of the
+// previously hovered feature.
+            map.current.on('mouseleave', 'state-fills', () => {
+                if (hoveredStateId !== null) {
+                    map.current.setFeatureState(
+                        { source: 'states', id: hoveredStateId },
+                        { hover: false }
+                    );
+                }
+                hoveredStateId = null;
+            });
+        });
+    });
+
+    return (
+        <div>
+            <div className="sidebar">
+                Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
+            </div>
+            <div ref={mapContainer} className="map-container" />
+        </div>
+    );
 }
