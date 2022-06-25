@@ -9,6 +9,9 @@ export default function App() {
     const [lng, setLng] = useState(-73.949657);
     const [lat, setLat] = useState(40.791012);
 
+    function generateHTML() {
+        return `<strong>Current Bids:</strong><p>The Arlington Players\\' production of Stephen Sondheim\\'s  <a href="http://www.thearlingtonplayers.org/drupal-6.20/node/4661/show" target="_blank" title="Opens in a new window"><em>A Little Night Music</em></a> comes to the Kogod Cradle at The Mead Center for American Theater (1101 6th Street SW) this weekend and next. 8:00 p.m.</p>`
+    }
     let imageUrls = {
         "Chelsea": {
             "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
@@ -105,6 +108,18 @@ export default function App() {
                     'line-color': '#627BC1',
                     'line-width': 2
                 }
+            });
+            map.current.on('click', 'state-fills', (e) => {
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                const description = e.features[0].properties.description;
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                new mapboxgl.Popup()
+                    .setLngLat([-74.0014, 40.7465])
+                    .setHTML(generateHTML())
+                    .addTo(map.current);
             });
             map.current.on('mousemove', 'state-fills', (e) => {
                 if (e.features.length > 0) {
