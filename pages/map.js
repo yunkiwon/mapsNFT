@@ -111,14 +111,14 @@ export default function App() {
             });
             map.current.on('click', 'state-fills', (e) => {
                 console.log(e.features)
-                const coordinates = e.features[0].properties.point;
-                const description = e.features[0].properties.description;
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                let coordinatesx = e.features[0].properties.pointx;
+                let coordinatesy = e.features[0].properties.pointy;
+                while (Math.abs(e.lngLat.lng - coordinatesx) > 180) {
+                    coordinatesx += e.lngLat.lng > coordinatesx ? 360 : -360;
                 }
 
                 new mapboxgl.Popup()
-                    .setLngLat(coordinates)
+                    .setLngLat([coordinatesx, coordinatesy])
                     .setHTML(generateHTML())
                     .addTo(map.current);
             });
