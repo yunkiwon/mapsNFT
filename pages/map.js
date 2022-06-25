@@ -110,7 +110,8 @@ export default function App() {
                 }
             });
             map.current.on('click', 'state-fills', (e) => {
-                const coordinates = e.features[0].point;
+                console.log(e.features)
+                const coordinates = e.features[0].properties.point;
                 const description = e.features[0].properties.description;
                 while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;

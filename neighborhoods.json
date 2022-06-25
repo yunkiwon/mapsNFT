@@ -838,13 +838,13 @@
         "cartodb_id": 50,
         "name": "Central Park",
         "created_at": "2014-03-09T19:11:53Z",
-        "updated_at": "2014-03-09T19:11:53Z"
+        "updated_at": "2014-03-09T19:11:53Z",
+        "point": [
+          -73.949657,
+          40.797069
+        ]
       },
       "id": 50,
-      "point": [
-        -73.949657,
-        40.797069
-      ],
       "geometry": {
         "type": "MultiPolygon",
         "coordinates": [
