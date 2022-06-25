@@ -151,7 +151,7 @@ export default function App() {
     });
     
     //have to deploy a contract on hardhat local and paste address into env file
-    const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
+    const contract_address = process.env.MINTER_CONTRACT_ADDRESS
 
     const mintNFT = ()=>{
         console.log("mintNFT")
