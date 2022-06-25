@@ -110,9 +110,14 @@ export default function App() {
                 }
             });
             map.current.on('click', 'state-fills', (e) => {
+                const coordinates = e.features[0].point;
+                const description = e.features[0].properties.description;
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
 
                 new mapboxgl.Popup()
-                    .setLngLat([-74.0014, 40.7465])
+                    .setLngLat(coordinates)
                     .setHTML(generateHTML())
                     .addTo(map.current);
             });
