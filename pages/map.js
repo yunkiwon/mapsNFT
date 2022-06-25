@@ -1,40 +1,71 @@
 import * as React from 'react';
+import {useState, useEffect, useMemo, useCallback} from 'react';
+import {render} from 'react-dom';
 import Map, {Source, Layer} from 'react-map-gl';
 
-const geojson = {
-  type: 'FeatureCollection',
-  features: [
-    {type: 'Feature', geometry: {type: 'point', coordinates: [-74.0, 40.7] }}
-]
-};
+import {dataLayer} from '../components/mapStyle';
 
+const MAPBOX_TOKEN = 'eyJ1Ijoia2l3b255dW4iLCJhIjoiY2w0dTFnaDdyMHFrNjNsb2IxYnJjM2xoZCJ9.3DixWgkoFgNo5Tbde6WZNA'; // Set your mapbox token here
 
-const layerStyle = {
-  id: 'point',
-  type: 'circle',
-  paint: {
-    'circle-radius': 10,
-    'circle-color': '#007cbf'
-  }
-};
+export default function App() {
+  const [year, setYear] = useState(2015);
+  const [allData, setAllData] = useState(null);
+  const [hoverInfo, setHoverInfo] = useState(null);
 
-export default function map() {
+  useEffect(() => {
+    /* global fetch */
+    fetch(
+      'https://raw.githubusercontent.com/uber/react-map-gl/master/examples/.data/us-income.geojson'
+    )
+      .then(resp => resp.json())
+      .then(json => setAllData(json))
+      .catch(err => console.error('Could not load data', err)); // eslint-disable-line
+  }, []);
+
+  const onHover = useCallback(event => {
+    const {
+      features,
+      point: {x, y}
+    } = event;
+    const hoveredFeature = features && features[0];
+
+    // prettier-ignore
+    setHoverInfo(hoveredFeature && {feature: hoveredFeature, x, y});
+  }, []);
+
+  const data = useMemo(() => {
+    return allData;
+  }, [allData, year]);
+
   return (
-<div>   
-  <Map
-    initialViewState={{
-            latitude: 40.75, 
-            longitude: -73.97, 
-            zoom: 12
-    }}
-    style={{width: 600, height: 500}}
-    mapStyle="mapbox://styles/mapbox/streets-v9"
-    mapboxAccessToken="pk.eyJ1Ijoia2l3b255dW4iLCJhIjoiY2w0dTFmN3VlMDdzaTNjbnp0Y2k0ZG9heiJ9.-a12UK1wm3QEPBfeuZ-MVQ"
-    >
-    <Source id="my-data" type="geojson" data={geojson}> 
-      <Layer {...layerStyle} />
-    </Source>
-  </Map>;
-</div> 
-  )
+    <>
+      <Map
+        initialViewState={{
+          latitude: 40,
+          longitude: -100,
+          zoom: 3
+        }}
+        mapStyle="mapbox://styles/mapbox/streets-v9"
+        mapboxAccessToken={MAPBOX_TOKEN}
+        interactiveLayerIds={['data']}
+        onMouseMove={onHover}
+      >
+        <Source type="geojson" data={data}>
+          <Layer {...dataLayer} />
+        </Source>
+        {hoverInfo && (
+          <div className="tooltip" style={{left: hoverInfo.x, top: hoverInfo.y}}>
+            <div>State: {hoverInfo.feature.properties.name}</div>
+            <div>Median Household Income: {hoverInfo.feature.properties.value}</div>
+            <div>Percentile: {(hoverInfo.feature.properties.percentile / 8) * 100}</div>
+          </div>
+        )}
+      </Map>
+
+    </>
+  );
+}
+
+export function renderToDom(container) {
+  render(<App />, container);
 }
