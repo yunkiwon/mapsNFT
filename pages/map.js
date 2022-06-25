@@ -149,11 +149,16 @@ export default function App() {
             });
         });
     });
+    
+    //have to deploy a contract on hardhat local and paste address into env file
+    const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
 
     const mintNFT = ()=>{
         console.log("mintNFT")
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner()
+
+        //have to paste deployed contract
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
 
         //cost per mint is .03
