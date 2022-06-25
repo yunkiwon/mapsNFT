@@ -2,15 +2,14 @@ import React, { useRef, useEffect, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-
 export default function App() {
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [lng, setLng] = useState(-73.949657);
     const [lat, setLat] = useState(40.791012);
 
-    function generateHTML() {
-        return `<strong>Current Bids:</strong><p><em>A Little Night Music</em></a> comes to the Kogod Cradle at The Mead Center for American Theater (1101 6th Street SW) this weekend and next. 8:00 p.m.</p>`
+    function generateHTML(name) {
+        return `<strong>Current Bids for ${name}</strong><p><em>Written by VitMalik</em></a> ;)))</p>`
     }
     let imageUrls = {
         "Chelsea": {
@@ -119,7 +118,7 @@ export default function App() {
 
                 new mapboxgl.Popup()
                     .setLngLat([coordinatesx, coordinatesy])
-                    .setHTML(generateHTML())
+                    .setHTML(generateHTML(e.features[0].properties.name))
                     .addTo(map.current);
             });
             map.current.on('mousemove', 'state-fills', (e) => {
