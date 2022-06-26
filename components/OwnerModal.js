@@ -22,12 +22,12 @@ export default function OwnerModal({nfts}) {
     }
 
   return (
-    <div className="width-1/2 ">
+    <div className="m-24 border-2 ">
     <div>Add or modify your block image</div>
-        <button onClick={() => setNFT()}>REEE</button>
     {
-        nfts ? nfts.map((item,i) =>
-        <div className={`my-2 mx-2 flex-shrink-0 rounded-full w-32 h-32 ${selectedNFT == item.metadata.image ? 'outline outline-3' : null}`}
+        nfts ? 
+        nfts.map((item,i) =>
+        <div className={`my-2 mx-2 flex-shrink-0 rounded-full w-32 h-32 ${selectedNFT == item.metadata.image ? 'hello border-4' : null}`}
               key={i}
               onClick={(e) => setSelectedNFT(item.metadata.image)}>
                 <div className="flex justify-center items-center imageContainer">
@@ -38,12 +38,14 @@ export default function OwnerModal({nfts}) {
                   />
 
                 </div>
+
         </div>
         )
         :
           <p>No NFTs Available</p>
 
       }
+     <button className="mt-12 border-2 px-12 py-4 bg-white" onClick={() => setNFT()}>SET NFT</button>
       </div>
   )
 

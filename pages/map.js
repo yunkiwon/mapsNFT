@@ -249,7 +249,6 @@ export default function App() {
 
 
             <div className="w-full h-full content-center flex flex-col">
-                <h1> NFTs Minted: {TotalNftsMinted}</h1>
                 <h1> Total Eth in Contract: {ethInContract}</h1>
                 <Sidebar address={userAddress}/>
                 <div ref={mapContainer} className="map-container" id="map"/>
