@@ -924,14 +924,14 @@
     {
       "type": "Feature",
       "properties": {
-        "cartodb_id": 52,
+        "cartodb_id": 1,
         "name": "Chelsea",
         "created_at": "2014-03-09T19:11:53Z",
         "updated_at": "2014-03-09T19:11:53Z",
         "pointy": 40.75219,
         "pointx": -73.993464
       },
-      "id": 52,
+      "id": 1,
       "geometry": {
         "type": "MultiPolygon",
         "coordinates": [
