@@ -17,39 +17,39 @@ export default function App() {
     const [userAddress, setUserAddress] = useState('')
     let imageUrls = {
         "Chelsea": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 1,
             "coords": [-74.0014, 40.7465]
         },
         "West Village": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 2,
             "coords": [-74.0048, 40.7347]
         },
         "Central Park": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 3,
             "coords": [-73.9665, 40.7812]
         },
         "Kips Bay": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 4,
             "coords": [-73.9801, 40.7423]
         },
         "East Village": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 5,
             "coords": [-73.981, 40.7265]
         },
         "SoHo": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 6,
             "coords": [-74.0019, 40.7246]
         },
         "Flatiron": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 7,
             "coords": [-73.9897, 40.7411]
         },
         "Gramercy": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 8,
             "coords": [-73.9845, 40.7368]
         },
         "Hells Kitchen": {
-            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "id": 9,
             "coords": [-73.9918, 40.7638]
         }
     }
@@ -69,131 +69,6 @@ export default function App() {
 
     useEffect(() => {
         console.log("HIT")
-        if (!map.current) return; // wait for map to initialize
-        map.current.on('load', () => {
-            if (!map.current.getSource('states')) {
-                map.current.addSource('states', {
-                    'type': 'geojson',
-                    'data': 'https://raw.githubusercontent.com/yunkiwon/mapsNFT/main/neighborhoods.json'
-                });
-                Object.keys(imageUrls).forEach(function (key) {
-                    let value = imageUrls[key];
-                    map.current.loadImage(
-                        value["url"],
-                        (error, image) => {
-                            if (error) throw error;
-
-                            map.current.addImage(key, image);
-                            map.current.addSource(key, {
-                                'type': 'geojson',
-                                'data': {
-                                    'type': 'FeatureCollection',
-                                    'features': [
-                                        {
-                                            'type': 'Feature',
-                                            'geometry': {
-                                                'type': 'Point',
-                                                'coordinates': value["coords"]
-                                            }
-                                        }
-                                    ]
-                                }
-                            });
-
-                            map.current.addLayer({
-                                'id': key,
-                                'type': 'symbol',
-                                'source': key,
-                                'layout': {
-                                    'icon-image': key,
-                                    'icon-size': 0.125
-                                }
-                            });
-                        }
-                    );
-
-                })
-            }
-            if (!map.current.getLayer('state-fills')) {
-                map.current.addLayer({
-                    'id': 'state-fills',
-                    'type': 'fill',
-                    'source': 'states',
-                    'layout': {},
-                    'paint': {
-                        'fill-color': '#627BC1',
-                        'fill-opacity': [
-                            'case',
-                            ['boolean', ['feature-state', 'hover'], false],
-                            1,
-                            0.5
-                        ]
-                    }
-                });
-            }
-
-            if (!map.current.getLayer('state-borders')) {
-                map.current.addLayer({
-                    'id': 'state-borders',
-                    'type': 'line',
-                    'source': 'states',
-                    'layout': {},
-                    'paint': {
-                        'line-color': '#627BC1',
-                        'line-width': 2
-                    }
-                });
-            }
-            map.current.on('click', 'state-fills', (e) => {
-                let coordinatesx = e.features[0].properties.pointx;
-                let coordinatesy = e.features[0].properties.pointy;
-                while (Math.abs(e.lngLat.lng - coordinatesx) > 180) {
-                    coordinatesx += e.lngLat.lng > coordinatesx ? 360 : -360;
-                }
-
-                const popupNode = document.createElement("div")
-                ReactDOM.render(
-                    <Popup name={e.features[0].properties.name} id={e.features[0].id}/>,
-                    popupNode
-                )
-                new mapboxgl.Popup()
-                    .setLngLat([coordinatesx, coordinatesy])
-                    .setDOMContent(popupNode)
-                    .addTo(map.current);
-            });
-            map.current.on('mousemove', 'state-fills', (e) => {
-                if (e.features.length > 0) {
-                    if (hoveredStateId !== null) {
-                        map.current.setFeatureState(
-                            {source: 'states', id: hoveredStateId},
-                            {hover: false}
-                        );
-                    }
-                    hoveredStateId = e.features[0].id;
-                    map.current.setFeatureState(
-                        {source: 'states', id: hoveredStateId},
-                        {hover: true}
-                    );
-                }
-            });
-            map.current.on('mouseleave', 'state-fills', () => {
-                if (hoveredStateId !== null) {
-                    map.current.setFeatureState(
-                        {source: 'states', id: hoveredStateId},
-                        {hover: false}
-                    );
-                }
-                hoveredStateId = null;
-            });
-        });
-    }, []);
-
-
-    //current # of minted nft's
-    const [TotalNftsMinted, setTotalNftsMinted] = useState(0)
-
-    //will get the current number of nft's minted on initial load
-    useEffect(() => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner()
 
@@ -205,10 +80,131 @@ export default function App() {
             setTotalNftsMinted(resp.toNumber())
         })
         contract.getImageUrls().then(resp => {
-            console.log(resp)
-            setUrls(resp)
+            if (!map.current) return; // wait for map to initialize
+            map.current.on('load', () => {
+                map.current.addSource('states', {
+                    'type': 'geojson',
+                    'data': 'https://raw.githubusercontent.com/yunkiwon/mapsNFT/main/neighborhoods.json'
+                });
+                Object.keys(imageUrls).forEach(function (key) {
+                    let value = imageUrls[key];
+                    if (resp[value["id"] - 1] !== undefined && resp[value["id"] - 1] !== "") {
+                        console.log(resp[value["id"] - 1])
+                        let img = resp[value["id"] - 1]
+                        map.current.loadImage(
+                            img,
+                            (error, image) => {
+                                if (error) throw error;
+
+                                map.current.addImage(key, image);
+                                map.current.addSource(key, {
+                                    'type': 'geojson',
+                                    'data': {
+                                        'type': 'FeatureCollection',
+                                        'features': [
+                                            {
+                                                'type': 'Feature',
+                                                'geometry': {
+                                                    'type': 'Point',
+                                                    'coordinates': value["coords"]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                });
+
+                                map.current.addLayer({
+                                    'id': key,
+                                    'type': 'symbol',
+                                    'source': key,
+                                    'layout': {
+                                        'icon-image': key,
+                                        'icon-size': 0.125
+                                    }
+                                });
+                            }
+                        );
+                    }
+
+                })
+                if (!map.current.getLayer('state-fills')) {
+                    map.current.addLayer({
+                        'id': 'state-fills',
+                        'type': 'fill',
+                        'source': 'states',
+                        'layout': {},
+                        'paint': {
+                            'fill-color': '#627BC1',
+                            'fill-opacity': [
+                                'case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                1,
+                                0.5
+                            ]
+                        }
+                    });
+                }
+
+                if (!map.current.getLayer('state-borders')) {
+                    map.current.addLayer({
+                        'id': 'state-borders',
+                        'type': 'line',
+                        'source': 'states',
+                        'layout': {},
+                        'paint': {
+                            'line-color': '#627BC1',
+                            'line-width': 2
+                        }
+                    });
+                }
+                map.current.on('click', 'state-fills', (e) => {
+                    let coordinatesx = e.features[0].properties.pointx;
+                    let coordinatesy = e.features[0].properties.pointy;
+                    while (Math.abs(e.lngLat.lng - coordinatesx) > 180) {
+                        coordinatesx += e.lngLat.lng > coordinatesx ? 360 : -360;
+                    }
+
+                    const popupNode = document.createElement("div")
+                    ReactDOM.render(
+                        <Popup name={e.features[0].properties.name} id={e.features[0].id}/>,
+                        popupNode
+                    )
+                    new mapboxgl.Popup()
+                        .setLngLat([coordinatesx, coordinatesy])
+                        .setDOMContent(popupNode)
+                        .addTo(map.current);
+                });
+                map.current.on('mousemove', 'state-fills', (e) => {
+                    if (e.features.length > 0) {
+                        if (hoveredStateId !== null) {
+                            map.current.setFeatureState(
+                                {source: 'states', id: hoveredStateId},
+                                {hover: false}
+                            );
+                        }
+                        hoveredStateId = e.features[0].id;
+                        map.current.setFeatureState(
+                            {source: 'states', id: hoveredStateId},
+                            {hover: true}
+                        );
+                    }
+                });
+                map.current.on('mouseleave', 'state-fills', () => {
+                    if (hoveredStateId !== null) {
+                        map.current.setFeatureState(
+                            {source: 'states', id: hoveredStateId},
+                            {hover: false}
+                        );
+                    }
+                    hoveredStateId = null;
+                });
+            });
         })
-    }, [])
+    }, []);
+
+
+    //current # of minted nft's
+    const [TotalNftsMinted, setTotalNftsMinted] = useState(0)
 
     const mintNFT = (id) => {
         console.log(id)
