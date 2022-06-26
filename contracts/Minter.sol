@@ -44,6 +44,10 @@ contract Minter is ERC721, Ownable {
         return supply.current();
     }
 
+    function updateImageUrls(uint256 id, string memory url) public payable{
+        imageUrls[id] = url;
+    }
+
 
     function getImageUrls() public view returns (string[] memory) {
         string[] memory arr = new string[](9);
