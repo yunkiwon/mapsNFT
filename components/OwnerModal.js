@@ -7,7 +7,7 @@ export default function OwnerModal({nfts}) {
     const [selectedNFT, setSelectedNFT] = useState('')
 
 
-    function setNFT(img) {
+    function setNFT(img, id) {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner()
 
@@ -15,7 +15,7 @@ export default function OwnerModal({nfts}) {
         const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
         console.log(contract_address)
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-        contract.updateImageUrls(1, img).then(resp => {
+        contract.updateImageUrls(id, img).then(resp => {
             console.log(resp)
         })
     }
@@ -42,7 +42,7 @@ export default function OwnerModal({nfts}) {
 
                             </div>
                             <button className="mt-12 border-2 px-12 py-4 bg-white"
-                                    onClick={() => setNFT(item.metadata.image)}>SET NFT
+                                    onClick={() => setNFT(item.metadata.image, 1)}>SET NFT
                             </button>
                         </>
                     )
