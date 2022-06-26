@@ -193,22 +193,22 @@ export default function App() {
     const [TotalNftsMinted, setTotalNftsMinted] = useState(0)
 
     //will get the current number of nft's minted on initial load
-    useEffect(() => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner()
+    // useEffect(() => {
+    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
+    //     const signer = provider.getSigner()
 
-        //have to paste deployed contract
-        const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
-        console.log(contract_address)
-        const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-        contract.totalSupply().then(resp => {
-            setTotalNftsMinted(resp.toNumber())
-        })
-        contract.getImageUrls().then(resp => {
-            console.log(resp)
-            setUrls(resp)
-        })
-    }, [])
+    //     //have to paste deployed contract
+    //     const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
+    //     console.log(contract_address)
+    //     const contract = new ethers.Contract(contract_address, Minter.abi, signer)
+    //     contract.totalSupply().then(resp => {
+    //         setTotalNftsMinted(resp.toNumber())
+    //     })
+    //     contract.getImageUrls().then(resp => {
+    //         console.log(resp)
+    //         setUrls(resp)
+    //     })
+    // }, [])
 
     const mintNFT = (id) => {
         console.log(id)
