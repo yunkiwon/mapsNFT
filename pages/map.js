@@ -128,6 +128,7 @@ export default function App() {
                         <Popup name={e.features[0].properties.name} id={e.features[0].id} resp={resp}/>,
                         popupNode
                     )
+                    console.log(resp[e.features[0].id - 1])
                     setCurrentImage(resp[e.features[0].id - 1])
                     console.log(e.features[0].id)
                     new mapboxgl.Popup()
