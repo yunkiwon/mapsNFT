@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import Image from 'next/image'
 import { ethers } from 'ethers'
 import mapboxgl from 'mapbox-gl';
 import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
@@ -11,8 +12,9 @@ export default function App() {
     const [lng, setLng] = useState(-73.949657);
     const [lat, setLat] = useState(40.791012);
 
-    function generateHTML(name) {
-        return `<strong>Current Bids for ${name}</strong><p><em>Written by VitMalik</em></a> ;)))</p>`
+    function generateHTML(name, id) {
+        return `<strong>${name} Block:</strong>
+                <button onclick="${mintNFT(id)}">MINT NFT</button>`
     }
     let imageUrls = {
         "Chelsea": {
@@ -153,12 +155,13 @@ export default function App() {
 
 
     //have to deploy a contract on hardhat local and paste address into env file
-    const contract_address = process.env.NEXT_PUBLIC_MINTER_CONTRACT_ADDRESS
+    const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
+    console.log(contract_address)
 
     //current # of minted nft's
     const [TotalNftsMinted, setTotalNftsMinted] = useState(0)
 
-    const mintNFT = () => {
+    const mintNFT = (id) => {
         console.log("mintNFT")
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner()
@@ -171,9 +174,6 @@ export default function App() {
             setTotalNftsMinted(totalSupply + 1)
         }).catch(e => console.log(e))
     }
-
-
-
 
     //will get the current number of nft's minted on initial load
     useEffect(() => {
@@ -191,7 +191,7 @@ export default function App() {
 
     return (
         <div>
-            <h1> NFT's Minted: {TotalNftsMinted}</h1>
+            <h1> NFTs Minted: {TotalNftsMinted}</h1>
             <div ref={mapContainer} className="map-container" id="map" />
 
 
