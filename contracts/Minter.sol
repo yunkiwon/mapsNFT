@@ -32,8 +32,6 @@ mapping(uint256=>bool) isIdTaken;
     //AND HAVE TO SET THIS SO IT DEPENDS ON THE ID GIVEN
     setHiddenMetadataUri("https://gateway.pinata.cloud/ipfs/QmdHM2Sq23sbrzijjyownQLTHCjpe59itp9RA1DtpbYQ4i");
 
-   
-
   }
 
   modifier mintCompliance(uint256 _mintAmount) {
