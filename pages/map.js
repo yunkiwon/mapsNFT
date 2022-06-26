@@ -171,7 +171,7 @@ export default function App() {
         //cost per mint is .03
         contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
             console.log("minted 1 ", resp)
-            setTotalNftsMinted(totalSupply + 1)
+            setTotalNftsMinted(TotalNftsMinted + 1)
         }).catch(e => console.log(e))
     }
 
