@@ -1,26 +1,14 @@
 // SPDX-License-Identifier: MIT
 
-// Amended by HashLips
-/**
-    !Disclaimer!
-    These contracts have been used to create tutorials,
-    and was created for the purpose to teach people
-    how to create smart contracts on the blockchain.
-    please review this code on your own before using any of
-    the following code for production.
-    The developer will not be responsible or liable for all loss or
-    damage whatsoever caused by you participating in any way in the
-    experimental code, whether putting money into the contract or
-    using the code for your own project.
-*/
-
 pragma solidity >=0.7.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "hardhat/console.sol";
 
-contract Minter is ERC721, Ownable {
+contract MapNFT is ERC721, Ownable {
+
   using Strings for uint256;
   using Counters for Counters.Counter;
 
@@ -29,16 +17,23 @@ contract Minter is ERC721, Ownable {
   string public uriPrefix = "";
   string public uriSuffix = ".json";
   string public hiddenMetadataUri;
-
+  
   uint256 public cost = 0.03 ether;
   uint256 public maxSupply = 5555;
-  uint256 public maxMintAmountPerTx = 5;
+  uint256 public maxMintAmountPerTx = 1;
 
-  bool public paused = true;
   bool public revealed = false;
 
-  constructor() ERC721("Minter", "BBirds") {
-    setHiddenMetadataUri("ipfs://__CID__/hidden.json");
+
+mapping(uint256=>bool) isIdTaken;
+
+  constructor() ERC721("BitBirds", "BBirds") {
+
+    //AND HAVE TO SET THIS SO IT DEPENDS ON THE ID GIVEN
+    setHiddenMetadataUri("https://gateway.pinata.cloud/ipfs/QmdHM2Sq23sbrzijjyownQLTHCjpe59itp9RA1DtpbYQ4i");
+
+   
+
   }
 
   modifier mintCompliance(uint256 _mintAmount) {
@@ -51,15 +46,16 @@ contract Minter is ERC721, Ownable {
     return supply.current();
   }
 
-  function mint(uint256 _mintAmount) public payable mintCompliance(_mintAmount) {
-    require(!paused, "The contract is paused!");
+  function mint(uint256 _mintAmount, uint256 _tokenID) public payable mintCompliance(_mintAmount) {
     require(msg.value >= cost * _mintAmount, "Insufficient funds!");
+    
+isIdTaken[_tokenID] = true;
 
-    _mintLoop(msg.sender, _mintAmount);
+    _mintLoop(msg.sender, 1,_tokenID);
   }
-
-  function mintForAddress(uint256 _mintAmount, address _receiver) public mintCompliance(_mintAmount) onlyOwner {
-    _mintLoop(_receiver, _mintAmount);
+  
+  function mintForAddress(uint256 _mintAmount, address _receiver, uint256 _tokenID) public mintCompliance(_mintAmount) onlyOwner {
+    _mintLoop(_receiver, _mintAmount,_tokenID);
   }
 
   function walletOfOwner(address _owner)
@@ -133,9 +129,7 @@ contract Minter is ERC721, Ownable {
     uriSuffix = _uriSuffix;
   }
 
-  function setPaused(bool _state) public onlyOwner {
-    paused = _state;
-  }
+  
 
   function withdraw() public onlyOwner {
     // This will transfer the remaining contract balance to the owner.
@@ -146,10 +140,11 @@ contract Minter is ERC721, Ownable {
     // =============================================================================
   }
 
-  function _mintLoop(address _receiver, uint256 _mintAmount) internal {
+  function _mintLoop(address _receiver, uint256 _mintAmount, uint tokenID) internal {
     for (uint256 i = 0; i < _mintAmount; i++) {
       supply.increment();
-      _safeMint(_receiver, supply.current());
+      _safeMint(_receiver, tokenID);
+      console.log("MINTED TOKEN");
     }
   }
 
