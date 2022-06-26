@@ -20,13 +20,37 @@ export default function App() {
             "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
             "coords": [-74.0014, 40.7465]
         },
-        "Harlem": {
+        "West Village": {
             "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
-            "coords": [-73.9465, 40.8116]
+            "coords": [-74.0048, 40.7347]
+        },
+        "Central Park": {
+            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "coords": [-73.9665, 40.7812]
+        },
+        "Kips Bay": {
+            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "coords": [-73.9801, 40.7423]
+        },
+        "East Village": {
+            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "coords": [-73.981, 40.7265]
         },
         "SoHo": {
             "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
             "coords": [-74.0019, 40.7246]
+        },
+        "Flatiron": {
+            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "coords": [-73.9897, 40.7411]
+        },
+        "Gramercy": {
+            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "coords": [-73.9845, 40.7368]
+        },
+        "Hells Kitchen": {
+            "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
+            "coords": [-73.9918, 40.7638]
         }
     }
 
@@ -44,6 +68,7 @@ export default function App() {
 
 
     useEffect(() => {
+        console.log("HIT")
         if (!map.current) return; // wait for map to initialize
         map.current.on('load', () => {
             if (!map.current.getSource('states')) {
@@ -161,7 +186,7 @@ export default function App() {
                 hoveredStateId = null;
             });
         });
-    });
+    }, []);
 
 
     //current # of minted nft's
@@ -180,6 +205,7 @@ export default function App() {
             setTotalNftsMinted(resp.toNumber())
         })
         contract.getImageUrls().then(resp => {
+            console.log(resp)
             setUrls(resp)
         })
     }, [])
