@@ -68,6 +68,7 @@ contract Minter is ERC721, Ownable {
     }
 
     function mint(uint256 _tokenID) public payable mintCompliance(1) {
+      console.log(msg.value);
         require(msg.value >= cost, "Insufficient funds!");
         require(isIdTaken[_tokenID] == false, "This token has already been minted");
 
