@@ -30,9 +30,15 @@ contract Minter is ERC721, Ownable {
 
     constructor() ERC721("BLOCKPARTY", "PARTY") {
 
+<<<<<<< HEAD
         //AND HAVE TO SET THIS SO IT DEPENDS ON THE ID GIVEN
         setHiddenMetadataUri("https://gateway.pinata.cloud/ipfs/QmdHM2Sq23sbrzijjyownQLTHCjpe59itp9RA1DtpbYQ4i");
     }
+=======
+    //AND HAVE TO SET THIS SO IT DEPENDS ON THE ID GIVEN
+    setHiddenMetadataUri("https://gateway.pinata.cloud/ipfs/QmdHM2Sq23sbrzijjyownQLTHCjpe59itp9RA1DtpbYQ4i");
+
+>>>>>>> 605cb94 (fetching user nfts)
 
     modifier mintCompliance(uint256 _mintAmount) {
         require(_mintAmount > 0 && _mintAmount <= maxMintAmountPerTx, "Invalid mint amount!");
@@ -40,9 +46,13 @@ contract Minter is ERC721, Ownable {
         _;
     }
 
+<<<<<<< HEAD
     function totalSupply() public view returns (uint256) {
         return supply.current();
     }
+=======
+  }
+>>>>>>> 605cb94 (fetching user nfts)
 
     function updateImageUrls(uint256 id, string memory url) public payable{
         imageUrls[id] = url;
@@ -63,11 +73,18 @@ contract Minter is ERC721, Ownable {
         return arr;
     }
 
+<<<<<<< HEAD
     function mint(uint256 _tokenID) public payable mintCompliance(1) {
         //require(msg.value >= cost * _mintAmount, "Insufficient funds!");
         require(isIdTaken[_tokenID] == false, "This token has already been minted");
 
         isIdTaken[_tokenID] = true;
+=======
+  function mint(uint256 _mintAmount, uint256 _tokenID) public payable mintCompliance(_mintAmount) {
+    require(msg.value >= cost * _mintAmount, "Insufficient funds!");
+    require(isIdTaken[_tokenID]==false, "This token has alreadty been minted");
+    isIdTaken[_tokenID] = true;
+>>>>>>> 605cb94 (fetching user nfts)
 
         _mintLoop(msg.sender, 1, _tokenID);
     }
