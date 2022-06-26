@@ -48,7 +48,8 @@ mapping(uint256=>bool) isIdTaken;
 
   function mint(uint256 _mintAmount, uint256 _tokenID) public payable mintCompliance(_mintAmount) {
     require(msg.value >= cost * _mintAmount, "Insufficient funds!");
-    
+    require(isIdTaken[_tokenID]==false, "This token has alreadty been minted");
+     
 isIdTaken[_tokenID] = true;
 
     _mintLoop(msg.sender, 1,_tokenID);
