@@ -156,9 +156,6 @@ export default function App() {
     });
 
 
-    //have to deploy a contract on hardhat local and paste address into env file
-    const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
-    console.log(contract_address)
 
     //current # of minted nft's
     const [TotalNftsMinted, setTotalNftsMinted] = useState(0)
@@ -169,11 +166,38 @@ export default function App() {
         const signer = provider.getSigner()
 
         //have to paste deployed contract
+        const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
+        console.log(contract_address)
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
         contract.totalSupply().then(resp => {
             setTotalNftsMinted(resp.toNumber())
         })
     }, [])
+
+    const mintNFT = (id) => {
+        console.log("mintNFT")
+        //have to deploy a contract on hardhat local and paste address into env file
+        const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
+        console.log(contract_address)
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner()
+
+        const contract = new ethers.Contract(contract_address, Minter.abi, signer)
+
+        //cost per mint is .03
+        contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
+            console.log("minted 1 ", resp)
+            setTotalNftsMinted(TotalNftsMinted + 1)
+        }).catch(e => console.log(e))
+    }
+
+
+    const Popup = ({ name, id }) => (
+        <div className="popup">
+            <strong>${name} Block:</strong>
+            <button onClick={() => mintNFT(id)}>MINT NFT</button>
+        </div>
+    )
 
 
 
@@ -185,24 +209,3 @@ export default function App() {
         </div>
     );
 }
-
-const mintNFT = (id) => {
-    console.log("mintNFT")
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner()
-
-    const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-
-    //cost per mint is .03
-    contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
-        console.log("minted 1 ", resp)
-        setTotalNftsMinted(TotalNftsMinted + 1)
-    }).catch(e => console.log(e))
-}
-
-const Popup = ({ name, id }) => (
-    <div className="popup">
-        <strong>${name} Block:</strong>
-        <button onClick={() => mintNFT(id)}>MINT NFT</button>
-    </div>
-)
