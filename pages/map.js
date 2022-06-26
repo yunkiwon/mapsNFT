@@ -12,6 +12,7 @@ export default function App() {
     const map = useRef(null);
     const [lng, setLng] = useState(-73.949657);
     const [lat, setLat] = useState(40.791012);
+    const [urls, setUrls] = useState(["", "", "", "", "", "", "", "", ""])
 
     let imageUrls = {
         "Chelsea": {
@@ -171,6 +172,9 @@ export default function App() {
         contract.totalSupply().then(resp => {
             setTotalNftsMinted(resp.toNumber())
         })
+        contract.getImageUrls().then(resp => {
+            setUrls(resp)
+        })
     }, [])
 
     const mintNFT = (id) => {
@@ -188,11 +192,14 @@ export default function App() {
         }).catch(e => console.log(e))
     }
 
-
     const Popup = ({name, id}) => (
         <div className="popup">
-            <strong>${name} Block:</strong>
-            <button onClick={() => mintNFT(id)}>MINT NFT</button>
+            <strong>{name} Block:</strong>
+            <button onClick={() => mintNFT(id)}>
+                {
+                    urls[id] === '' || urls[id] === undefined ? "MINT NFT" : "TAKEN, FUCK OFF"
+                }
+            </button>
         </div>
     )
 
