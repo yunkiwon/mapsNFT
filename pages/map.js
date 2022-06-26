@@ -1,9 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
-import Image from 'next/image'
-import { ethers } from 'ethers'
+import React, {useEffect, useRef, useState} from 'react';
+import {ethers} from 'ethers'
 import mapboxgl from 'mapbox-gl';
 import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
-import { BigNumber } from "@ethersproject/bignumber";
 import * as ReactDOM from "react-dom";
 import Wallet from "../components/Wallet";
 
@@ -134,29 +132,28 @@ export default function App() {
                 if (e.features.length > 0) {
                     if (hoveredStateId !== null) {
                         map.current.setFeatureState(
-                            { source: 'states', id: hoveredStateId },
-                            { hover: false }
+                            {source: 'states', id: hoveredStateId},
+                            {hover: false}
                         );
                     }
                     hoveredStateId = e.features[0].id;
                     map.current.setFeatureState(
-                        { source: 'states', id: hoveredStateId },
-                        { hover: true }
+                        {source: 'states', id: hoveredStateId},
+                        {hover: true}
                     );
                 }
             });
             map.current.on('mouseleave', 'state-fills', () => {
                 if (hoveredStateId !== null) {
                     map.current.setFeatureState(
-                        { source: 'states', id: hoveredStateId },
-                        { hover: false }
+                        {source: 'states', id: hoveredStateId},
+                        {hover: false}
                     );
                 }
                 hoveredStateId = null;
             });
         });
     });
-
 
 
     //current # of minted nft's
@@ -185,36 +182,38 @@ export default function App() {
         const signer = provider.getSigner()
 
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-console.log("RIGHT BEFORE MINT")
+        console.log("RIGHT BEFORE MINT")
         //cost per mint is .03
 
         //this is giving bignumber error , will not send 'value' param for now.
-     //   contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
+        //   contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
 
-        contract.mint(1, ).then(resp => {
+
+        contract.mint(id).then(resp => {
             console.log("minted 1 ", resp)
-           // setTotalNftsMinted(TotalNftsMinted + 1)
+            setTotalNftsMinted(TotalNftsMinted + 1)
         }).catch(e => console.log(e))
     }
 
 
-    const Popup = ({ name, id }) => (
+    const Popup = ({name, id}) => (
         <div className="popup">
             <strong>${name} Block:</strong>
             <button onClick={() => mintNFT(id)}>MINT NFT</button>
         </div>
     )
 
-
-
     return (
         <div>
             <Wallet/>
 
             <h1> NFTs Minted: {TotalNftsMinted}</h1>
-            <div ref={mapContainer} className="map-container" id="map" />
+            <div ref={mapContainer} className="map-container" id="map"/>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 border hover:border-gray-300 focus:border-gray-300 rounded shadow-lg absolute top-32 right-4 lg:top-32 lg:right-36 p-4 flex items-center text-xs disabled:cursor-not-allowed" style={{top: "16rem"}} src="https://cdn.vox-cdn.com/thumbor/E0TZFXgqVo9fu5mxQVA-wclMTis=/1400x1400/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/23319190/1239170733.jpg"/>
+            <img
+                className="bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 border hover:border-gray-300 focus:border-gray-300 rounded shadow-lg absolute top-32 right-4 lg:top-32 lg:right-36 p-4 flex items-center text-xs disabled:cursor-not-allowed"
+                style={{top: "16rem"}}
+                src="https://cdn.vox-cdn.com/thumbor/E0TZFXgqVo9fu5mxQVA-wclMTis=/1400x1400/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/23319190/1239170733.jpg"/>
 
 
         </div>
