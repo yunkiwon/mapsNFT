@@ -3,17 +3,10 @@ import { UserProvider } from '../utils/userProvider';
 import {ethers} from "ethers";
 import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
 
-export default function OwnerModal() {
+export default function OwnerModal({nfts}) {
 
-    const [nfts, setNFTs] = useState([])
     const [selectedNFT, setSelectedNFT] = useState('')
 
-    useEffect(() => {
-        UserProvider.getOpenseaItems("0xc8D9651bEAc1d74634800F3E2Ed3701325047fEc").then((nfts) => {
-          setNFTs(nfts);
-        });
-      }
-    , []);
 
     function setNFT() {
         const provider = new ethers.providers.Web3Provider(window.ethereum);

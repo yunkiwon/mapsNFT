@@ -23,7 +23,7 @@ export default function Sidebar({address}) {
     <div className="w-1/2">
     {
         ownsBlockParty ? 
-        <OwnerModal/> :
+        <OwnerModal nfts={nfts}/> :
         <WelcomeModal/>
     }
     </div> 
