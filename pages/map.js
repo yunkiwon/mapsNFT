@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { ethers } from 'ethers'
 import mapboxgl from 'mapbox-gl';
 import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
+import { BigNumber } from "@ethersproject/bignumber";
 import * as ReactDOM from "react-dom";
 
 
@@ -183,11 +184,15 @@ export default function App() {
         const signer = provider.getSigner()
 
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-
+console.log("RIGHT BEFORE MINT")
         //cost per mint is .03
-        contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
+
+        //this is giving bignumber error , will not send 'value' param for now.
+     //   contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
+
+        contract.mint(1, ).then(resp => {
             console.log("minted 1 ", resp)
-            setTotalNftsMinted(TotalNftsMinted + 1)
+           // setTotalNftsMinted(TotalNftsMinted + 1)
         }).catch(e => console.log(e))
     }
 

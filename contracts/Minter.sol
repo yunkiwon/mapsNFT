@@ -27,16 +27,10 @@ contract Minter is ERC721, Ownable {
 
 mapping(uint256=>bool) isIdTaken;
 
-  constructor() ERC721("BitBirds", "BBirds") {
+  constructor() ERC721("BLOCKPARTY", "PARTY") {
 
     //AND HAVE TO SET THIS SO IT DEPENDS ON THE ID GIVEN
     setHiddenMetadataUri("https://gateway.pinata.cloud/ipfs/QmdHM2Sq23sbrzijjyownQLTHCjpe59itp9RA1DtpbYQ4i");
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> refs/remotes/origin/main
   }
 
   modifier mintCompliance(uint256 _mintAmount) {
@@ -49,8 +43,8 @@ mapping(uint256=>bool) isIdTaken;
     return supply.current();
   }
 
-  function mint(uint256 _mintAmount, uint256 _tokenID) public payable mintCompliance(_mintAmount) {
-    require(msg.value >= cost * _mintAmount, "Insufficient funds!");
+  function mint( uint256 _tokenID) public payable mintCompliance(1) {
+    //require(msg.value >= cost * _mintAmount, "Insufficient funds!");
     require(isIdTaken[_tokenID]==false, "This token has alreadty been minted");
 
 isIdTaken[_tokenID] = true;
