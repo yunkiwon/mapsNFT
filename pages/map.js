@@ -193,7 +193,7 @@ export default function App() {
         <div>
             <h1> NFTs Minted: {TotalNftsMinted}</h1>
             <div ref={mapContainer} className="map-container" id="map" />
-            
+
         </div>
     );
 }
