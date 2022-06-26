@@ -18,7 +18,7 @@ contract Minter is ERC721, Ownable {
     string public uriSuffix = ".json";
     string public hiddenMetadataUri;
 
-    uint256 public cost = 0.03 ether;
+    uint256 public cost = 0.3 ether;
     uint256 public maxSupply = 5555;
     uint256 public maxMintAmountPerTx = 1;
 
@@ -68,7 +68,7 @@ contract Minter is ERC721, Ownable {
     }
 
     function mint(uint256 _tokenID) public payable mintCompliance(1) {
-        //require(msg.value >= cost * _mintAmount, "Insufficient funds!");
+        require(msg.value >= cost, "Insufficient funds!");
         require(isIdTaken[_tokenID] == false, "This token has already been minted");
 
         isIdTaken[_tokenID] = true;
