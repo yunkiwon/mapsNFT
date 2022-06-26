@@ -4,6 +4,12 @@ import mapboxgl from 'mapbox-gl';
 import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
 import * as ReactDOM from "react-dom";
 import Wallet from "../components/Wallet";
+import Sidebar from '../components/Sidebar'
+import { UserProvider } from '../utils/userProvider';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
+import { getAddress } from 'ethers/lib/utils';
+import { hasEthereum } from '../utils/ethereum'
+
 
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -13,7 +19,7 @@ export default function App() {
     const [lng, setLng] = useState(-73.949657);
     const [lat, setLat] = useState(40.791012);
     const [urls, setUrls] = useState(["", "", "", "", "", "", "", "", ""])
-
+    const [userAddress, setUserAddress] = useState('') 
     let imageUrls = {
         "Chelsea": {
             "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
@@ -40,6 +46,8 @@ export default function App() {
     });
 
     let hoveredStateId = null;
+
+    
 
     useEffect(() => {
         if (!map.current) return; // wait for map to initialize
@@ -190,6 +198,20 @@ export default function App() {
             console.log("minted 1 ", resp)
             setTotalNftsMinted(TotalNftsMinted + 1)
         }).catch(e => console.log(e))
+    useEffect(() => {
+        getAddress() 
+    }, []) 
+
+    async function getAddress(){
+            if (!hasEthereum()) return
+            try {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner()
+            const address = await signer.getAddress()
+            setUserAddress(address)
+            } catch (error) {
+                console.log(error)
+            }
     }
 
     const Popup = ({name, id}) => (
@@ -201,21 +223,24 @@ export default function App() {
                 }
             </button>
         </div>
-    )
+    )}
 
     return (
         <div>
             <Wallet/>
 
             <h1> NFTs Minted: {TotalNftsMinted}</h1>
-            <div ref={mapContainer} className="map-container" id="map"/>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
                 className="bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 border hover:border-gray-300 focus:border-gray-300 rounded shadow-lg absolute top-32 right-4 lg:top-32 lg:right-36 p-4 flex items-center text-xs disabled:cursor-not-allowed"
                 style={{top: "16rem"}}
                 src="https://cdn.vox-cdn.com/thumbor/E0TZFXgqVo9fu5mxQVA-wclMTis=/1400x1400/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/23319190/1239170733.jpg"/>
 
-
-        </div>
-    );
-}
+            <div className="w-full h-full content-center flex flex-col">
+                <h1> NFTs Minted: {TotalNftsMinted}</h1>
+                <Sidebar address={userAddress}/> 
+                <div ref={mapContainer} className="map-container" id="map" />
+                </div>
+        </div> 
+        )
+    }
