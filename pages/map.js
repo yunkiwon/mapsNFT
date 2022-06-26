@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { ethers } from 'ethers'
 import mapboxgl from 'mapbox-gl';
 import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
+import * as ReactDOM from "react-dom";
 
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -12,10 +13,6 @@ export default function App() {
     const [lng, setLng] = useState(-73.949657);
     const [lat, setLat] = useState(40.791012);
 
-    function generateHTML(name, id) {
-        return `<strong>${name} Block:</strong>
-                <button onclick="${() => mintNFT(id)}">MINT NFT</button>`
-    }
     let imageUrls = {
         "Chelsea": {
             "url": "https://docs.mapbox.com/mapbox-gl-js/assets/cat.png",
@@ -121,9 +118,14 @@ export default function App() {
                     coordinatesx += e.lngLat.lng > coordinatesx ? 360 : -360;
                 }
 
+                const popupNode = document.createElement("div")
+                ReactDOM.render(
+                    <Popup name={e.features[0].properties.name}/>,
+                    popupNode
+                )
                 new mapboxgl.Popup()
                     .setLngLat([coordinatesx, coordinatesy])
-                    .setHTML(generateHTML(e.features[0].properties.name))
+                    .setDOMContent(popupNode)
                     .addTo(map.current);
             });
             map.current.on('mousemove', 'state-fills', (e) => {
@@ -161,20 +163,6 @@ export default function App() {
     //current # of minted nft's
     const [TotalNftsMinted, setTotalNftsMinted] = useState(0)
 
-    const mintNFT = (id) => {
-        console.log("mintNFT")
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner()
-
-        const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-
-        //cost per mint is .03
-        contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
-            console.log("minted 1 ", resp)
-            setTotalNftsMinted(TotalNftsMinted + 1)
-        }).catch(e => console.log(e))
-    }
-
     //will get the current number of nft's minted on initial load
     useEffect(() => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -197,3 +185,24 @@ export default function App() {
         </div>
     );
 }
+
+const mintNFT = (id) => {
+    console.log("mintNFT")
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner()
+
+    const contract = new ethers.Contract(contract_address, Minter.abi, signer)
+
+    //cost per mint is .03
+    contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
+        console.log("minted 1 ", resp)
+        setTotalNftsMinted(TotalNftsMinted + 1)
+    }).catch(e => console.log(e))
+}
+
+const Popup = ({ name, id }) => (
+    <div className="popup">
+        <strong>${name} Block:</strong>
+        <button onClick={() => mintNFT(id)}>MINT NFT</button>
+    </div>
+)
