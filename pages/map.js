@@ -125,7 +125,7 @@ export default function App() {
 
                     const popupNode = document.createElement("div")
                     ReactDOM.render(
-                        <Popup name={e.features[0].properties.name} id={e.features[0].id}/>,
+                        <Popup name={e.features[0].properties.name} id={e.features[0].id} resp={resp}/>,
                         popupNode
                     )
                     setCurrentImage(resp[e.features[0].id - 1])
@@ -226,12 +226,12 @@ export default function App() {
         }
     }
 
-    const Popup = ({name, id}) => (
+    const Popup = ({name, id, resp}) => (
         <div className="popup">
             <strong>{name} Block:</strong>
             <button onClick={() => mintNFT(id)}>
                 {
-                    urls[id] === '' || urls[id] === undefined ? "MINT NFT" : "TAKEN, FUCK OFF"
+                    resp[id - 1] === '' || resp[id - 1] === undefined ? "MINT NFT" : "TAKEN, FUCK OFF"
                 }
             </button>
         </div>
