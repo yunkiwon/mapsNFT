@@ -192,23 +192,32 @@ export default function App() {
     //current # of minted nft's
     const [TotalNftsMinted, setTotalNftsMinted] = useState(0)
 
-    //will get the current number of nft's minted on initial load
-    // useEffect(() => {
-    //     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //     const signer = provider.getSigner()
+    const [ethInContract, setEthInContact] = useState(0)
 
-    //     //have to paste deployed contract
-    //     const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
-    //     console.log(contract_address)
-    //     const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-    //     contract.totalSupply().then(resp => {
-    //         setTotalNftsMinted(resp.toNumber())
-    //     })
-    //     contract.getImageUrls().then(resp => {
-    //         console.log(resp)
-    //         setUrls(resp)
-    //     })
-    // }, [])
+    //will get the current number of nft's minted on initial load
+    useEffect(() => {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner()
+
+        //have to paste deployed contract
+        const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
+        console.log(contract_address)
+        const contract = new ethers.Contract(contract_address, Minter.abi, signer)
+        contract.totalSupply().then(resp => {
+            setTotalNftsMinted(resp.toNumber())
+        })
+        contract.getImageUrls().then(resp => {
+            setUrls(resp)
+        })
+
+        const balance =  provider.getBalance(contract_address).then((resp)=>{
+            console.log("BALANCE ", ethers.utils.formatEther(resp))
+            setEthInContact(ethers.utils.formatEther(resp))
+            
+        })
+        
+    }, [])
+
 
     const mintNFT = (id) => {
         console.log(id)
@@ -218,7 +227,7 @@ export default function App() {
         console.log(contract_address)
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner()
-
+        const options = {value: ethers.utils.parseEther(".3")}
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
         contract.mint(id).then(resp => {
             console.log("minted 1 ", resp)
@@ -257,7 +266,6 @@ export default function App() {
         <div>
             <Wallet/>
 
-            <h1> NFTs Minted: {TotalNftsMinted}</h1>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
                 className="bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 border hover:border-gray-300 focus:border-gray-300 rounded shadow-lg absolute top-32 right-4 lg:top-32 lg:right-36 p-4 flex items-center text-xs disabled:cursor-not-allowed"
@@ -266,6 +274,7 @@ export default function App() {
 
             <div className="w-full h-full content-center flex flex-col">
                 <h1> NFTs Minted: {TotalNftsMinted}</h1>
+                <h1> Total Eth in Contract: {ethInContract}</h1>
                 <Sidebar address={userAddress}/>
                 <div ref={mapContainer} className="map-container" id="map"/>
             </div>
