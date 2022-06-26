@@ -5,6 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import Minter from '../src/artifacts/contracts/Minter.sol/Minter.json'
 import { BigNumber } from "@ethersproject/bignumber";
 import * as ReactDOM from "react-dom";
+import Wallet from "../components/Wallet";
 
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -208,8 +209,13 @@ console.log("RIGHT BEFORE MINT")
 
     return (
         <div>
+            <Wallet/>
+
             <h1> NFTs Minted: {TotalNftsMinted}</h1>
             <div ref={mapContainer} className="map-container" id="map" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 border hover:border-gray-300 focus:border-gray-300 rounded shadow-lg absolute top-32 right-4 lg:top-32 lg:right-36 p-4 flex items-center text-xs disabled:cursor-not-allowed" src="https://cdn.vox-cdn.com/thumbor/E0TZFXgqVo9fu5mxQVA-wclMTis=/1400x1400/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/23319190/1239170733.jpg"/>
+
 
         </div>
     );
