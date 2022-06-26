@@ -127,7 +127,6 @@ export default function App() {
                     }
 
                 })
-                if (!map.current.getLayer('state-fills')) {
                     map.current.addLayer({
                         'id': 'state-fills',
                         'type': 'fill',
@@ -143,9 +142,8 @@ export default function App() {
                             ]
                         }
                     });
-                }
 
-                if (!map.current.getLayer('state-borders')) {
+
                     map.current.addLayer({
                         'id': 'state-borders',
                         'type': 'line',
@@ -156,7 +154,7 @@ export default function App() {
                             'line-width': 2
                         }
                     });
-                }
+
                 map.current.on('click', 'state-fills', (e) => {
                     let coordinatesx = e.features[0].properties.pointx;
                     let coordinatesy = e.features[0].properties.pointy;
