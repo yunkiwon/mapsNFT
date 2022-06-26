@@ -14,6 +14,7 @@ export default function App() {
     const [lng, setLng] = useState(-73.949657);
     const [lat, setLat] = useState(40.791012);
     const [urls, setUrls] = useState(["", "", "", "", "", "", "", "", ""])
+    const [currentImage, setCurrentImage] = useState("")
     const [userAddress, setUserAddress] = useState('')
     let imageUrls = {
         "Chelsea": {
@@ -80,80 +81,40 @@ export default function App() {
             setTotalNftsMinted(resp.toNumber())
         })
         contract.getImageUrls().then(resp => {
+            console.log(resp)
             if (!map.current) return; // wait for map to initialize
             map.current.on('load', () => {
                 map.current.addSource('states', {
                     'type': 'geojson',
                     'data': 'https://raw.githubusercontent.com/yunkiwon/mapsNFT/main/neighborhoods.json'
                 });
-                Object.keys(imageUrls).forEach(function (key) {
-                    let value = imageUrls[key];
-                    if (resp[value["id"] - 1] !== undefined && resp[value["id"] - 1] !== "") {
-                        console.log(resp[value["id"] - 1])
-                        let img = resp[value["id"] - 1]
-                        map.current.loadImage(
-                            img,
-                            (error, image) => {
-                                if (error) throw error;
-
-                                map.current.addImage(key, image);
-                                map.current.addSource(key, {
-                                    'type': 'geojson',
-                                    'data': {
-                                        'type': 'FeatureCollection',
-                                        'features': [
-                                            {
-                                                'type': 'Feature',
-                                                'geometry': {
-                                                    'type': 'Point',
-                                                    'coordinates': value["coords"]
-                                                }
-                                            }
-                                        ]
-                                    }
-                                });
-
-                                map.current.addLayer({
-                                    'id': key,
-                                    'type': 'symbol',
-                                    'source': key,
-                                    'layout': {
-                                        'icon-image': key,
-                                        'icon-size': 0.125
-                                    }
-                                });
-                            }
-                        );
+                map.current.addLayer({
+                    'id': 'state-fills',
+                    'type': 'fill',
+                    'source': 'states',
+                    'layout': {},
+                    'paint': {
+                        'fill-color': '#627BC1',
+                        'fill-opacity': [
+                            'case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            1,
+                            0.5
+                        ]
                     }
-
-                })
-                    map.current.addLayer({
-                        'id': 'state-fills',
-                        'type': 'fill',
-                        'source': 'states',
-                        'layout': {},
-                        'paint': {
-                            'fill-color': '#627BC1',
-                            'fill-opacity': [
-                                'case',
-                                ['boolean', ['feature-state', 'hover'], false],
-                                1,
-                                0.5
-                            ]
-                        }
-                    });
+                });
 
 
-                    map.current.addLayer({
-                        'id': 'state-borders',
-                        'type': 'line',
-                        'source': 'states',
-                        'layout': {},
-                        'paint': {
-                            'line-color': '#627BC1',
-                            'line-width': 2
-                        }
-                    });
+                map.current.addLayer({
+                    'id': 'state-borders',
+                    'type': 'line',
+                    'source': 'states',
+                    'layout': {},
+                    'paint': {
+                        'line-color': '#627BC1',
+                        'line-width': 2
+                    }
+                });
 
                 map.current.on('click', 'state-fills', (e) => {
                     let coordinatesx = e.features[0].properties.pointx;
@@ -167,6 +128,8 @@ export default function App() {
                         <Popup name={e.features[0].properties.name} id={e.features[0].id}/>,
                         popupNode
                     )
+                    setCurrentImage(resp[e.features[0].id - 1])
+                    console.log(e.features[0].id)
                     new mapboxgl.Popup()
                         .setLngLat([coordinatesx, coordinatesy])
                         .setDOMContent(popupNode)
@@ -222,14 +185,13 @@ export default function App() {
             setUrls(resp)
         })
 
-        const balance =  provider.getBalance(contract_address).then((resp)=>{
+        const balance = provider.getBalance(contract_address).then((resp) => {
             console.log("BALANCE ", ethers.utils.formatEther(resp))
             setEthInContact(ethers.utils.formatEther(resp))
-            
-        })
-        
-    }, [])
 
+        })
+
+    }, [])
 
 
     const mintNFT = (id) => {
@@ -242,7 +204,7 @@ export default function App() {
         const signer = provider.getSigner()
         const options = {value: ethers.utils.parseEther(".3")}
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-        contract.mint(id).then(resp => {
+        contract.mint(id, options).then(resp => {
             console.log("minted 1 ", resp)
             setTotalNftsMinted(TotalNftsMinted + 1)
         }).catch(e => console.log(e))
@@ -280,10 +242,11 @@ export default function App() {
             <Wallet/>
 
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            {currentImage === "" ? null : <img
                 className="bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 border hover:border-gray-300 focus:border-gray-300 rounded shadow-lg absolute top-32 right-4 lg:top-32 lg:right-36 p-4 flex items-center text-xs disabled:cursor-not-allowed"
                 style={{top: "16rem"}}
-                src="https://cdn.vox-cdn.com/thumbor/E0TZFXgqVo9fu5mxQVA-wclMTis=/1400x1400/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/23319190/1239170733.jpg"/>
+                src={currentImage}/>}
+
 
             <div className="w-full h-full content-center flex flex-col">
                 <h1> NFTs Minted: {TotalNftsMinted}</h1>
