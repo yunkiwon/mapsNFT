@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
-contract MapNFT is ERC721, Ownable {
+contract Minter is ERC721, Ownable {
 
   using Strings for uint256;
   using Counters for Counters.Counter;
@@ -17,7 +17,7 @@ contract MapNFT is ERC721, Ownable {
   string public uriPrefix = "";
   string public uriSuffix = ".json";
   string public hiddenMetadataUri;
-  
+
   uint256 public cost = 0.03 ether;
   uint256 public maxSupply = 5555;
   uint256 public maxMintAmountPerTx = 1;
@@ -32,7 +32,7 @@ mapping(uint256=>bool) isIdTaken;
     //AND HAVE TO SET THIS SO IT DEPENDS ON THE ID GIVEN
     setHiddenMetadataUri("https://gateway.pinata.cloud/ipfs/QmdHM2Sq23sbrzijjyownQLTHCjpe59itp9RA1DtpbYQ4i");
 
-   
+
 
   }
 
@@ -48,12 +48,12 @@ mapping(uint256=>bool) isIdTaken;
 
   function mint(uint256 _mintAmount, uint256 _tokenID) public payable mintCompliance(_mintAmount) {
     require(msg.value >= cost * _mintAmount, "Insufficient funds!");
-    
+
 isIdTaken[_tokenID] = true;
 
     _mintLoop(msg.sender, 1,_tokenID);
   }
-  
+
   function mintForAddress(uint256 _mintAmount, address _receiver, uint256 _tokenID) public mintCompliance(_mintAmount) onlyOwner {
     _mintLoop(_receiver, _mintAmount,_tokenID);
   }
@@ -129,7 +129,7 @@ isIdTaken[_tokenID] = true;
     uriSuffix = _uriSuffix;
   }
 
-  
+
 
   function withdraw() public onlyOwner {
     // This will transfer the remaining contract balance to the owner.
