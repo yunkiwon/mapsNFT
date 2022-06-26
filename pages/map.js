@@ -121,7 +121,7 @@ export default function App() {
 
                 const popupNode = document.createElement("div")
                 ReactDOM.render(
-                    <Popup name={e.features[0].properties.name}/>,
+                    <Popup name={e.features[0].properties.name} id={e.features[0].id}/>,
                     popupNode
                 )
                 new mapboxgl.Popup()
@@ -186,7 +186,7 @@ export default function App() {
         const signer = provider.getSigner()
 
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-        contract.mint(id).then(resp => {
+        contract.mint(id, { value: ethers.utils.parseEther(".03") }).then(resp => {
             console.log("minted 1 ", resp)
             setTotalNftsMinted(TotalNftsMinted + 1)
         }).catch(e => console.log(e))

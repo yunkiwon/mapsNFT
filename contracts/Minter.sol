@@ -26,7 +26,10 @@ contract Minter is ERC721, Ownable {
 
 
     mapping(uint256 => bool) isIdTaken;
+
+
     mapping(uint256 => string) imageUrls;
+    mapping(uint256 => address) idToOwner;
 
     constructor() ERC721("BLOCKPARTY", "PARTY") {
 
@@ -45,6 +48,7 @@ contract Minter is ERC721, Ownable {
     }
 
     function updateImageUrls(uint256 id, string memory url) public payable{
+        require(msg.sender == idToOwner[id], "NO NO NO NO");
         imageUrls[id] = url;
     }
 
@@ -66,9 +70,8 @@ contract Minter is ERC721, Ownable {
     function mint(uint256 _tokenID) public payable mintCompliance(1) {
         //require(msg.value >= cost * _mintAmount, "Insufficient funds!");
         require(isIdTaken[_tokenID] == false, "This token has already been minted");
-
         isIdTaken[_tokenID] = true;
-
+        idToOwner[_tokenID] = msg.sender;
         _mintLoop(msg.sender, 1, _tokenID);
     }
 
