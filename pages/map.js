@@ -14,7 +14,7 @@ export default function App() {
 
     function generateHTML(name, id) {
         return `<strong>${name} Block:</strong>
-                <button onclick="${mintNFT(id)}">MINT NFT</button>`
+                <button onclick="${() => mintNFT(id)}">MINT NFT</button>`
     }
     let imageUrls = {
         "Chelsea": {
