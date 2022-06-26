@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "hardhat/console.sol";
 
-contract MapNFT is ERC721, Ownable {
+contract Minter is ERC721, Ownable {
 
   using Strings for uint256;
   using Counters for Counters.Counter;
