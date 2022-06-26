@@ -182,13 +182,6 @@ export default function App() {
         const signer = provider.getSigner()
 
         const contract = new ethers.Contract(contract_address, Minter.abi, signer)
-        console.log("RIGHT BEFORE MINT")
-        //cost per mint is .03
-
-        //this is giving bignumber error , will not send 'value' param for now.
-        //   contract.mint(1, { value: ethers.utils.parseEther(".03") }).then(resp => {
-
-
         contract.mint(id).then(resp => {
             console.log("minted 1 ", resp)
             setTotalNftsMinted(TotalNftsMinted + 1)
