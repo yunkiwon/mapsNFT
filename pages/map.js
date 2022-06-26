@@ -7,7 +7,6 @@ import Wallet from "../components/Wallet";
 import Sidebar from '../components/Sidebar'
 import {hasEthereum} from '../utils/ethereum'
 
-
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 export default function App() {
     const mapContainer = useRef(null);
@@ -47,73 +46,79 @@ export default function App() {
     useEffect(() => {
         if (!map.current) return; // wait for map to initialize
         map.current.on('load', () => {
-            map.current.addSource('states', {
-                'type': 'geojson',
-                'data': 'https://raw.githubusercontent.com/yunkiwon/mapsNFT/main/neighborhoods.json'
-            });
-            Object.keys(imageUrls).forEach(function (key) {
-                let value = imageUrls[key];
-                map.current.loadImage(
-                    value["url"],
-                    (error, image) => {
-                        if (error) throw error;
+            if (!map.current.getSource('states')) {
+                map.current.addSource('states', {
+                    'type': 'geojson',
+                    'data': 'https://raw.githubusercontent.com/yunkiwon/mapsNFT/main/neighborhoods.json'
+                });
+                Object.keys(imageUrls).forEach(function (key) {
+                    let value = imageUrls[key];
+                    map.current.loadImage(
+                        value["url"],
+                        (error, image) => {
+                            if (error) throw error;
 
-                        map.current.addImage(key, image);
-
-                        map.current.addSource(key, {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'FeatureCollection',
-                                'features': [
-                                    {
-                                        'type': 'Feature',
-                                        'geometry': {
-                                            'type': 'Point',
-                                            'coordinates': value["coords"]
+                            map.current.addImage(key, image);
+                            map.current.addSource(key, {
+                                'type': 'geojson',
+                                'data': {
+                                    'type': 'FeatureCollection',
+                                    'features': [
+                                        {
+                                            'type': 'Feature',
+                                            'geometry': {
+                                                'type': 'Point',
+                                                'coordinates': value["coords"]
+                                            }
                                         }
-                                    }
-                                ]
-                            }
-                        });
+                                    ]
+                                }
+                            });
 
-                        map.current.addLayer({
-                            'id': key,
-                            'type': 'symbol',
-                            'source': key,
-                            'layout': {
-                                'icon-image': key,
-                                'icon-size': 0.125
-                            }
-                        });
+                            map.current.addLayer({
+                                'id': key,
+                                'type': 'symbol',
+                                'source': key,
+                                'layout': {
+                                    'icon-image': key,
+                                    'icon-size': 0.125
+                                }
+                            });
+                        }
+                    );
+
+                })
+            }
+            if (!map.current.getLayer('state-fills')) {
+                map.current.addLayer({
+                    'id': 'state-fills',
+                    'type': 'fill',
+                    'source': 'states',
+                    'layout': {},
+                    'paint': {
+                        'fill-color': '#627BC1',
+                        'fill-opacity': [
+                            'case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            1,
+                            0.5
+                        ]
                     }
-                );
-            });
-            map.current.addLayer({
-                'id': 'state-fills',
-                'type': 'fill',
-                'source': 'states',
-                'layout': {},
-                'paint': {
-                    'fill-color': '#627BC1',
-                    'fill-opacity': [
-                        'case',
-                        ['boolean', ['feature-state', 'hover'], false],
-                        1,
-                        0.5
-                    ]
-                }
-            });
+                });
+            }
 
-            map.current.addLayer({
-                'id': 'state-borders',
-                'type': 'line',
-                'source': 'states',
-                'layout': {},
-                'paint': {
-                    'line-color': '#627BC1',
-                    'line-width': 2
-                }
-            });
+            if (!map.current.getLayer('state-borders')) {
+                map.current.addLayer({
+                    'id': 'state-borders',
+                    'type': 'line',
+                    'source': 'states',
+                    'layout': {},
+                    'paint': {
+                        'line-color': '#627BC1',
+                        'line-width': 2
+                    }
+                });
+            }
             map.current.on('click', 'state-fills', (e) => {
                 let coordinatesx = e.features[0].properties.pointx;
                 let coordinatesy = e.features[0].properties.pointy;
@@ -180,6 +185,7 @@ export default function App() {
     }, [])
 
     const mintNFT = (id) => {
+        console.log(id)
         console.log("mintNFT")
         //have to deploy a contract on hardhat local and paste address into env file
         const contract_address = process.env.NEXT_PUBLIC_MINTER_ADDRESS
